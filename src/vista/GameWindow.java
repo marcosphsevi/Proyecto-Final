@@ -25,7 +25,6 @@ public class GameWindow extends JFrame {
 	public GameWindow () {
 		setTitle("OlaKüeAçe");
 		setSize(ANCHO, LARGO);
-		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		setLocationRelativeTo(null);
@@ -35,9 +34,11 @@ public class GameWindow extends JFrame {
 		canvas.setMaximumSize(new Dimension (ANCHO, LARGO));
 		canvas.setMinimumSize(new Dimension (ANCHO, LARGO));
 		canvas.setFocusable(true);
-		
+		teclado = new Teclado();
 		add(canvas);
 		canvas.addKeyListener(teclado);
+		setVisible(true);
+		//canvas.requestFocus();
 	}
 	
 	public void setControlador (Controlador controlador) {
