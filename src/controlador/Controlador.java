@@ -1,5 +1,6 @@
 package controlador;
 
+import vista.Assets;
 import vista.GameWindow;
 
 public class Controlador implements Runnable{
@@ -8,14 +9,24 @@ public class Controlador implements Runnable{
 	private Thread hilo;
 	private boolean estado = false;
 	
-	private static final int FPS = 60;
+	private static final int FPS = 30;
 	private double TARGETTIME = 1000000000/FPS;
 	private double delta = 0;
 	public static int FPS_PROMEDIO = FPS;
 	
+	private GameState gameState;
 	
 	public Controlador (GameWindow gameWindow) {
 		this.gameWindow = gameWindow;
+	}
+	
+	public GameState getGameState() {
+		return gameState;
+	}
+	
+	private void init() {
+		Assets.init();
+		gameState = new GameState();
 	}
 	
 	@Override
@@ -25,6 +36,8 @@ public class Controlador implements Runnable{
 		long lastTime = System.nanoTime();
 		int fps = 0;
 		long tiempo = 0;
+		
+		init();
 		
 		while(estado) {
 			ahora = System.nanoTime();
@@ -37,7 +50,7 @@ public class Controlador implements Runnable{
 				gameWindow.dibujar();
 				delta--;
 				fps++;
-				System.out.println(fps);
+				//System.out.println(fps);
 			}
 			if (tiempo >= 1000000000) {
 				FPS_PROMEDIO = fps;
@@ -50,7 +63,7 @@ public class Controlador implements Runnable{
 	}
 	
 	private void update() {
-		
+		gameState.update();
 	}
 	
 	public void start() {

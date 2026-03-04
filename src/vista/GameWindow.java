@@ -7,7 +7,9 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
+
 import controlador.Controlador;
+import controlador.Teclado;
 
 public class GameWindow extends JFrame {
 	
@@ -17,6 +19,8 @@ public class GameWindow extends JFrame {
 	
 	private BufferStrategy bs;
 	private Graphics g;
+	private Controlador controlador;
+	private Teclado teclado;
 	
 	public GameWindow () {
 		setTitle("OlaKüeAçe");
@@ -25,7 +29,6 @@ public class GameWindow extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		setLocationRelativeTo(null);
-		
 		canvas = new Canvas();
 		
 		canvas.setPreferredSize(new Dimension(ANCHO, LARGO));
@@ -33,7 +36,12 @@ public class GameWindow extends JFrame {
 		canvas.setMinimumSize(new Dimension (ANCHO, LARGO));
 		canvas.setFocusable(true);
 		
-		add(canvas);		
+		add(canvas);
+		canvas.addKeyListener(teclado);
+	}
+	
+	public void setControlador (Controlador controlador) {
+		this.controlador = controlador;
 	}
 	
 	public void dibujar() {
@@ -47,10 +55,10 @@ public class GameWindow extends JFrame {
 		g = bs.getDrawGraphics();
 		
 		//-----
-		g.clearRect(0, 0, ANCHO, LARGO);
-		//g.drawRect(0, 0, 100, 100);
 		g.setColor(Color.BLACK);
+		controlador.getGameState().draw(g);
 		g.drawString(Integer.toString(Controlador.FPS_PROMEDIO), 10, 10);
+		
 		//-----
 		
 		g.dispose();

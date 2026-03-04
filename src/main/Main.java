@@ -5,7 +5,9 @@ import vista.GameWindow;
 
 public class Main {
 	public static void main(String[] args) {
-		Controlador controlador = new Controlador(new GameWindow());
+		GameWindow ventana = new GameWindow();
+		Controlador controlador = new Controlador(ventana);
+		ventana.setControlador(controlador);
 		controlador.start();
 	}
 }
