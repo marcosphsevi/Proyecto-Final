@@ -27,9 +27,9 @@ public class Controlador implements Runnable {
 
     private void init() {
         Assets.init();
-        gameState = new GameState();
+        gameState = new GameState(gameWindow.getTeclado());
     }
-
+    
     /** Arranca el hilo (se llama desde Main) */
     public void start() {
         corriendo = true;
