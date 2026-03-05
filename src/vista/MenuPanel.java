@@ -3,18 +3,13 @@ package vista;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import java.awt.Graphics;
-import java.awt.Image;
-import javax.swing.ImageIcon;
+import java.awt.Color;
+import java.awt.Font;
 
 public class MenuPanel extends JPanel {
 
-    private Image fondo;
-
     public MenuPanel(GameWindow window) {
-
         setLayout(null);
-
-        fondo = new ImageIcon("res/menu_fondo.png").getImage();
 
         JButton jugar = new JButton("JUGAR");
         JButton salir = new JButton("SALIR");
@@ -32,6 +27,11 @@ public class MenuPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(fondo, 0, 0, getWidth(), getHeight(), null);
+        // Fondo simple hasta que tengas la imagen lista
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 48));
+        g.drawString("MiniMario", 280, 200);
     }
 }

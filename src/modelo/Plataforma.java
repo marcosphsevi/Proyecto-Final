@@ -1,8 +1,8 @@
 package modelo;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.Color;
 
 public class Plataforma extends GameObject {
 
@@ -18,11 +18,10 @@ public class Plataforma extends GameObject {
     @Override
     public void draw(Graphics g) {
         g.setColor(Color.GRAY);
-        g.fillRect(x, y, width, height);
+        g.fillRect((int) posicion.getX(), (int) posicion.getY(), width, height);
     }
 
-    @Override
     public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
+        return new Rectangle((int) posicion.getX(), (int) posicion.getY(), width, height);
     }
 }
