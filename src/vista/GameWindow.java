@@ -4,6 +4,8 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+//import java.awt.event.MouseMotionAdapter;
+//import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.BorderLayout;
 
@@ -39,11 +41,17 @@ public class GameWindow extends JFrame {
         canvas.setMinimumSize(new Dimension(ANCHO, LARGO));
         canvas.setFocusable(true);
         canvas.addKeyListener(teclado);
-
+        /*
+        canvas.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                System.out.println("X: " + e.getX() + "  Y: " + e.getY());
+            }
+        });
+		*/
         mostrarMenu();
         setVisible(true);
     }
-
 
     public void setControlador(Controlador controlador) {
         this.controlador = controlador;
@@ -53,7 +61,6 @@ public class GameWindow extends JFrame {
         return teclado;
     }
 
-    /** Muestra el panel del menú principal */
     public void mostrarMenu() {
         menuPanel = new MenuPanel(this);
         setContentPane(menuPanel);
@@ -61,21 +68,19 @@ public class GameWindow extends JFrame {
         repaint();
     }
 
- // Método iniciarJuego corregido:
     public void iniciarJuego() {
         JPanel gamePanel = new JPanel();
         gamePanel.setLayout(new BorderLayout());
         gamePanel.add(canvas, BorderLayout.CENTER);
-        
+
         setContentPane(gamePanel);
         revalidate();
         repaint();
-        
+
         canvas.requestFocusInWindow();
         controlador.startGame();
     }
 
-    /** Llamado por el Controlador cada frame para dibujar */
     public void dibujar() {
         bs = canvas.getBufferStrategy();
 
@@ -84,13 +89,11 @@ public class GameWindow extends JFrame {
             return;
         }
 
-        g = bs.getDrawGraphics();
+        Graphics g = bs.getDrawGraphics();
 
-        // Limpiar pantalla
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, ANCHO, LARGO);
 
-        // Dibujar estado del juego
         controlador.getGameState().draw(g);
         g.setColor(Color.WHITE);
         g.drawString("FPS: " + Controlador.FPS_PROMEDIO, 10, 20);
@@ -98,6 +101,4 @@ public class GameWindow extends JFrame {
         g.dispose();
         bs.show();
     }
-
-    private Graphics g; // campo para reutilizar referencia
 }

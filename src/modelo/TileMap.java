@@ -1,6 +1,5 @@
 package modelo;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -14,13 +13,6 @@ public class TileMap {
     public static final int COLS = 28;
     public static final int ROWS = 28;
 
-    public enum TipoTile { VACIO, PLATAFORMA, ESCALERA, ESCALERA_Y_PLATAFORMA }
-
-    // Colores clave detectados en los tiles
-    private static final int MASK_ROSA = 0x00EC3194; // (236, 49, 148) sin alpha
-    private static final int MASK_CIAN = 0x0014F3FF; // ( 20,243,255) sin alpha
-
-    // Matriz del mapa (valores del Excel)
     public static final String[][] MAP = {
         {"1A","1A","1A","1A","1A","1A","1A","1A","1C","1A","1C","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A"},
         {"1A","1A","1A","1A","1A","1A","1A","1A","1C","1A","1C","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A"},
@@ -29,7 +21,7 @@ public class TileMap {
         {"1A","1A","1A","1A","1A","1A","1A","1A","1C","1A","1C","1A","1A","1A","1A","1A","1C","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A"},
         {"1A","1A","1A","1A","1A","1A","1A","1A","1C","1A","1C","1A","1A","1A","1A","1A","1C","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A"},
         {"5","5","5","5","5","5","5","5","5B","5","5B","5","5","5","5","5","5B","5","6","6","7","7","8","8","1A","1A","1A","1A"},
-        {"A5","5A","5A","5A","5A","5A","5A","5A","5A","5A","5A","5C","5A","5A","5A","5A","5A","5A","6A","6A","7A","7A","8A","8C","1","1","1A","1A"},
+        {"5A","5A","5A","5A","5A","5A","5A","5A","5A","5A","5A","5C","5A","5A","5A","5A","5A","5A","6A","6A","7A","7A","8A","8C","1","1","1A","1A"},
         {"1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1C","1A","1A","1A","1A"},
         {"1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","1C","1A","1A","1A","1A","1A","1A","1A","1A","1A","1A","8","8B","7","7","6","6"},
         {"1A","1A","1A","1A","1A","1A","8","8","7","7","6","6B","5","5","4","4","3","3","2","2","1","1","8A","8A","7A","7A","6A","6A"},
@@ -53,11 +45,9 @@ public class TileMap {
     };
 
     private Map<String, BufferedImage> tiles;
-    private Map<String, TipoTile>      tiposPorNombre;
 
     public TileMap() {
-        tiles          = new HashMap<>();
-        tiposPorNombre = new HashMap<>();
+        tiles = new HashMap<>();
         cargarTiles();
     }
 
@@ -75,58 +65,14 @@ public class TileMap {
 
         for (String nombre : nombres) {
             BufferedImage img = Loader.imageLoader("/resource/tiles/" + nombre + ".PNG");
-            if (img != null) {
-                tiles.put(nombre, img);
-                tiposPorNombre.put(nombre, clasificarPorColor(img));
-            }
+            if (img != null) tiles.put(nombre, img);
         }
-    }
-
-    /**
-     * Clasifica un tile analizando sus píxeles:
-     *  - Rosa  (236,49,148) → plataforma sólida
-     *  - Cian  (20,243,255) → escalera
-     *  - Ambos             → escalera y plataforma
-     *  - Ninguno           → vacío (fondo)
-     */
-    private TipoTile clasificarPorColor(BufferedImage img) {
-        boolean tienePink = false;
-        boolean tieneCian = false;
-
-        int w = img.getWidth();
-        int h = img.getHeight();
-
-        outer:
-        for (int y = 0; y < h; y++) {
-            for (int x = 0; x < w; x++) {
-                int rgb = img.getRGB(x, y) & 0x00FFFFFF;
-                if (rgb == MASK_ROSA) tienePink = true;
-                if (rgb == MASK_CIAN) tieneCian = true;
-                if (tienePink && tieneCian) break outer;
-            }
-        }
-
-        if (tienePink && tieneCian) return TipoTile.ESCALERA_Y_PLATAFORMA;
-        if (tienePink)              return TipoTile.PLATAFORMA;
-        if (tieneCian)              return TipoTile.ESCALERA;
-        return TipoTile.VACIO;
-    }
-
-    /** Devuelve el tipo del tile en la posición (col, fila) de la matriz */
-    public TipoTile getTipo(int col, int fila) {
-        if (col < 0 || col >= COLS || fila < 0 || fila >= ROWS) return TipoTile.VACIO;
-        String key = MAP[fila][col];
-        if (key.equals("A5")) key = "5A";
-        TipoTile tipo = tiposPorNombre.get(key);
-        return tipo != null ? tipo : TipoTile.VACIO;
     }
 
     public void draw(Graphics g) {
         for (int fila = 0; fila < ROWS; fila++) {
             for (int col = 0; col < COLS; col++) {
                 String key = MAP[fila][col];
-                if (key.equals("A5")) key = "5A";
-
                 BufferedImage img = tiles.get(key);
                 if (img != null) {
                     g.drawImage(img,

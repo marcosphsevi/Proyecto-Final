@@ -4,8 +4,6 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
-import modelo.TileMap.TipoTile;
-
 public class Nivel {
 
     private TileMap tileMap;
@@ -16,70 +14,42 @@ public class Nivel {
         tileMap     = new TileMap();
         plataformas = new ArrayList<>();
         escaleras   = new ArrayList<>();
-        construirDesdeImagenes();
+        construirManualmente();
     }
 
-    private void construirDesdeImagenes() {
-        int ts   = TileMap.TILE_SIZE;
-        int cols = TileMap.COLS;
-        int rows = TileMap.ROWS;
+    private void construirManualmente() {
 
-        // --- Plataformas: segmentos horizontales de tiles con rosa ---
-        for (int fila = 0; fila < rows; fila++) {
-            int inicio = -1;
-            for (int col = 0; col <= cols; col++) {
-                boolean esPlat = col < cols && esPlataforma(tileMap.getTipo(col, fila));
-                if (esPlat && inicio == -1) {
-                    inicio = col;
-                } else if (!esPlat && inicio != -1) {
-                    int x     = inicio * ts;
-                    int y     = fila   * ts;
-                    int ancho = (col - inicio) * ts;
+        // PLATAFORMAS
 
-                    // Fila 27 especial: cols 0-13 plano, cols 14-27 inclinado
-                    if (fila == 27) {
-                        // Parte plana: col 0-13 -> x=0, w=392, y=756, inclinacion=0
-                        if (inicio < 14) {
-                            int finPlano = Math.min(col, 14);
-                            plataformas.add(new Plataforma(inicio * ts, y, (finPlano - inicio) * ts, ts, 0));
-                        }
-                        // Parte inclinada: col 14-27 -> sube 28px en 392px (inclinacion=-28)
-                        if (col > 14) {
-                            int iniInc = Math.max(inicio, 14);
-                            plataformas.add(new Plataforma(iniInc * ts, y, (col - iniInc) * ts, ts, -56));
-                        }
-                    } else {
-                        plataformas.add(new Plataforma(x, y, ancho, ts, 0));
-                    }
-                    inicio = -1;
-                }
-            }
-        }
+        // Tramo recto: de (0,756) a (390,756)
+        plataformas.add(new Plataforma(0, 756, 390, 14, 0));
 
-        // --- Escaleras: segmentos verticales de tiles con cian ---
-        for (int col = 0; col < cols; col++) {
-            int inicio = -1;
-            for (int fila = 0; fila <= rows; fila++) {
-                boolean esEsc = fila < rows && esEscalera(tileMap.getTipo(col, fila));
-                if (esEsc && inicio == -1) {
-                    inicio = fila;
-                } else if (!esEsc && inicio != -1) {
-                    int x    = col    * ts;
-                    int y    = inicio * ts;
-                    int alto = (fila - inicio) * ts;
-                    escaleras.add(new Escalera(x, y, ts, alto));
-                    inicio = -1;
-                }
-            }
-        }
-    }
+        // Tramo inclinado: de (390,756) a (782,732) → sube 24px
+        plataformas.add(new Plataforma(390, 756, 392, 14, -24));
 
-    private boolean esPlataforma(TipoTile t) {
-        return t == TipoTile.PLATAFORMA || t == TipoTile.ESCALERA_Y_PLATAFORMA;
-    }
+        // Tramo inclinado: de (0,615) a (727,659) → baja 44px
+        plataformas.add(new Plataforma(0, 615, 727, 14, 44));
 
-    private boolean esEscalera(TipoTile t) {
-        return t == TipoTile.ESCALERA || t == TipoTile.ESCALERA_Y_PLATAFORMA;
+        // Tramo inclinado: de (56,543) a (782,501) → sube 42px
+        plataformas.add(new Plataforma(56, 543, 726, 14, -42));
+
+        // Tramo inclinado: de (0,384) a (727,427) → baja 43px
+        plataformas.add(new Plataforma(0, 384, 727, 14, 43));
+
+        // Tramo inclinado: de (55,311) a (782,270) → sube 41px
+        plataformas.add(new Plataforma(55, 311, 727, 14, -41));
+
+        // Tramo inclinado: de (503,182) a (727,196) → baja 14px
+        plataformas.add(new Plataforma(503, 182, 224, 14, 14));
+
+        // Tramo recto: de (0,182) a (503,182)
+        plataformas.add(new Plataforma(0, 182, 503, 14, 0));
+
+        // Tramo recto: de (308,84) a (475,84)
+        plataformas.add(new Plataforma(308, 84, 167, 14, 0));
+
+        // ESCALERAS
+        // (por definir)
     }
 
     public TileMap getTileMap()              { return tileMap;     }

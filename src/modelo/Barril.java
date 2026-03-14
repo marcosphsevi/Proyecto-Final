@@ -52,13 +52,15 @@ public class Barril extends GameObject {
                 velY      = 0;
                 enElSuelo = true;
 
-                // Dirección según inclinación
-                float pendiente = p.getInclinacion() / (float) p.width;
-                velX = VELOCIDAD * (pendiente >= 0 ? 1 : -1) * (1 + Math.abs(pendiente) * 0.5f);
+                // Solo ajustar dirección si hay inclinación
+                if (p.getInclinacion() != 0) {
+                    float pendiente = p.getInclinacion() / (float) p.width;
+                    velX = VELOCIDAD * (pendiente >= 0 ? 1 : -1) * (1 + Math.abs(pendiente) * 0.5f);
+                }
             }
         }
 
-        if (posicion.getX() <= 0)    velX =  VELOCIDAD;
+        if (posicion.getX() <= 0)       velX =  VELOCIDAD;
         if (posicion.getX() + W >= 784) velX = -VELOCIDAD;
 
         rotacion = (rotacion + 5) % 360;

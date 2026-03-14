@@ -10,7 +10,7 @@ import controlador.Teclado;
 public class Jugador extends GameObject {
 
     private static final float VELOCIDAD    = 3f;
-    private static final float FUERZA_SALTO = -7.5f;
+    private static final float FUERZA_SALTO = -10.5f;
     private static final float GRAVEDAD     = 0.4f;
     private static final float VEL_ESCALERA = 2.5f;
 
