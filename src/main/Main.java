@@ -4,10 +4,10 @@ import controlador.Controlador;
 import vista.GameWindow;
 
 public class Main {
-	public static void main(String[] args) {
-		GameWindow ventana = new GameWindow();
-		Controlador controlador = new Controlador(ventana);
-		ventana.setControlador(controlador);
-		controlador.start();
-	}
+    public static void main(String[] args) {
+        GameWindow ventana = new GameWindow();
+        Controlador controlador = new Controlador(ventana);
+        ventana.setControlador(controlador);
+        controlador.start(); // arranca el hilo, espera a que se presione JUGAR
+    }
 }
