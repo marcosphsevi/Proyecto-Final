@@ -31,12 +31,15 @@ public class GameState {
 
         spawnManager.update(barriles);
 
-        // Actualizar barriles y eliminar los que salen de pantalla
         Iterator<Barril> it = barriles.iterator();
         while (it.hasNext()) {
             Barril b = it.next();
             b.update(nivel.getPlataformas());
-            if (!b.isActivo()) it.remove();
+
+            if (!b.isActivo()) {
+                it.remove();
+                continue; // ← ya no existe, no comprobar colisión
+            }
 
             // Colisión con jugador
             if (b.getBounds().intersects(player.getBounds())) {

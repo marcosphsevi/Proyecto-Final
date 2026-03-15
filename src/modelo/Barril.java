@@ -8,7 +8,6 @@ import java.util.List;
 public class Barril extends GameObject {
 
     private float velX, velY;
-    private boolean enElSuelo;
     private static final float GRAVEDAD  = 0.4f;
     private static final float VELOCIDAD = 3f;
     private static final int   W = 24;
@@ -19,10 +18,11 @@ public class Barril extends GameObject {
         super(x, y, W, H);
         this.velX = VELOCIDAD;
         this.velY = 0;
-        this.enElSuelo = false;
     }
 
-    public boolean isActivo() { return posicion.getY() < 900; }
+    public boolean isActivo() {
+        return !(posicion.getX() <= 25 && posicion.getY() >= 720);
+    }
 
     @Override
     public void update() {}
@@ -31,8 +31,6 @@ public class Barril extends GameObject {
         velY += GRAVEDAD;
         posicion.setX(posicion.getX() + velX);
         posicion.setY(posicion.getY() + velY);
-
-        enElSuelo = false;
 
         int   centroX = (int) posicion.getX() + W / 2;
         float piesY   = (float) posicion.getY() + H;
@@ -49,10 +47,8 @@ public class Barril extends GameObject {
 
             if (velY >= 0 && piesY >= superficieY && piesY <= superficieY + margen) {
                 posicion.setY(superficieY - H);
-                velY      = 0;
-                enElSuelo = true;
+                velY = 0;
 
-                // Solo ajustar dirección si hay inclinación
                 if (p.getInclinacion() != 0) {
                     float pendiente = p.getInclinacion() / (float) p.width;
                     velX = VELOCIDAD * (pendiente >= 0 ? 1 : -1) * (1 + Math.abs(pendiente) * 0.5f);
