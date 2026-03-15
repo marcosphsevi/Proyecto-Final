@@ -1,10 +1,12 @@
 package modelo;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Random;
+
+import vista.Assets;
 
 public class Barril extends GameObject {
 
@@ -15,9 +17,13 @@ public class Barril extends GameObject {
     private static final int   H             = 24;
     private static final float PROB_ESCALERA = 0.4f;
 
+    // Animación
+    private int frameActual   = 0;
+    private int ticksFrame    = 0;
+    private static final int TICKS_POR_FRAME = 6; // cada 6 frames cambia sprite
+
     private boolean bajandoEscalera = false;
     private Escalera ultimaEscalera = null;
-    private int rotacion = 0;
     private Random rand = new Random();
 
     public Barril(int x, int y) {
@@ -43,14 +49,13 @@ public class Barril extends GameObject {
                 posicion.setY(posicion.getY() + VELOCIDAD);
                 velY = 0;
 
-                // Salir antes de llegar al final para no traspasar la plataforma de abajo
                 float fondoEscalera = (float)(escaleraActual.getPosicion().getY() + escaleraActual.height);
                 if (posicion.getY() + H >= fondoEscalera) {
                     posicion.setY(fondoEscalera - H);
                     bajandoEscalera = false;
                 }
 
-                rotacion = (rotacion + 5) % 360;
+                avanzarFrame(2); // alterna entre 2 sprites (escalera)
                 return;
             } else {
                 bajandoEscalera = false;
@@ -79,7 +84,6 @@ public class Barril extends GameObject {
                 posicion.setY(superficieY - H);
                 velY = 0;
 
-                // Solo decidir si es una escalera diferente a la última
                 Escalera escaleraCercana = escaleraDebajo(escaleras);
                 if (escaleraCercana != null && escaleraCercana != ultimaEscalera) {
                     ultimaEscalera = escaleraCercana;
@@ -98,10 +102,25 @@ public class Barril extends GameObject {
         if (posicion.getX() <= 0) velX = VELOCIDAD;
         if (posicion.getX() + W >= 784) velX = -VELOCIDAD;
 
-        rotacion = (rotacion + 5) % 360;
+        avanzarFrame(4); // alterna entre 4 sprites (rodando)
     }
 
-    /** Devuelve una escalera que esté justo debajo de los pies del barril */
+    /**
+     * Avanza el frame de animación ciclando entre totalFrames.
+     * Si rueda hacia la izquierda (velX < 0) va al revés.
+     */
+    private void avanzarFrame(int totalFrames) {
+        ticksFrame++;
+        if (ticksFrame >= TICKS_POR_FRAME) {
+            ticksFrame = 0;
+            if (!bajandoEscalera && velX < 0) {
+                frameActual = (frameActual - 1 + totalFrames) % totalFrames;
+            } else {
+                frameActual = (frameActual + 1) % totalFrames;
+            }
+        }
+    }
+
     private Escalera escaleraDebajo(List<Escalera> escaleras) {
         int centroX = (int) posicion.getX() + W / 2;
         float piesY = (float) posicion.getY() + H;
@@ -119,7 +138,6 @@ public class Barril extends GameObject {
         return null;
     }
 
-    /** Devuelve la escalera con la que el barril está en contacto */
     private Escalera escaleraEnContacto(List<Escalera> escaleras) {
         Rectangle bounds = getBounds();
         for (Escalera e : escaleras) {
@@ -136,13 +154,19 @@ public class Barril extends GameObject {
     public void draw(Graphics g) {
         int x = (int) posicion.getX();
         int y = (int) posicion.getY();
-        g.setColor(new Color(120, 60, 20));
-        g.fillOval(x, y, W, H);
-        g.setColor(Color.GRAY);
-        g.drawOval(x, y, W, H);
-        double rad = Math.toRadians(rotacion);
-        g.drawLine(x + 12, y + 12,
-                   x + 12 + (int)(10 * Math.cos(rad)),
-                   y + 12 + (int)(10 * Math.sin(rad)));
+
+        BufferedImage sprite;
+        if (bajandoEscalera) {
+            sprite = Assets.barrilEscalera != null ? Assets.barrilEscalera[frameActual % 2] : null;
+        } else {
+            sprite = Assets.barrilRodando != null ? Assets.barrilRodando[frameActual % 4] : null;
+        }
+
+        if (sprite != null) {
+            g.drawImage(sprite, x, y, W, H, null);
+        } else {
+            // fallback si no cargaron los sprites
+            g.drawOval(x, y, W, H);
+        }
     }
 }

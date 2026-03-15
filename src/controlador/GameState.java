@@ -19,11 +19,10 @@ public class GameState {
     private SpawnManager spawnManager;
 
     public GameState(Teclado teclado) {
-        nivel        = new Nivel();
-        barriles     = new ArrayList<>();
+        nivel = new Nivel();
+        barriles = new ArrayList<>();
         spawnManager = new SpawnManager();
-        player       = new Jugador(new Vector2D(80, 692), Assets.player, teclado,
-                                   nivel.getPlataformas(), nivel.getEscaleras());
+        player = new Jugador(new Vector2D(80, 692), Assets.player, teclado, nivel.getPlataformas(), nivel.getEscaleras());
     }
 
     public void update() {
