@@ -22,7 +22,7 @@ public class GameState {
         nivel        = new Nivel();
         barriles     = new ArrayList<>();
         spawnManager = new SpawnManager();
-        player       = new Jugador(new Vector2D(80, 620), Assets.player, teclado,
+        player       = new Jugador(new Vector2D(80, 692), Assets.player, teclado,
                                    nivel.getPlataformas(), nivel.getEscaleras());
     }
 

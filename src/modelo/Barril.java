@@ -9,23 +9,24 @@ public class Barril extends GameObject {
 
     private float velX, velY;
     private boolean enElSuelo;
-    private static final float GRAVEDAD = 0.4f;
-    private static final float VELOCIDAD = 2.5f;
+    private static final float GRAVEDAD  = 0.4f;
+    private static final float VELOCIDAD = 3f;
+    private static final int   W = 24;
+    private static final int   H = 24;
     private int rotacion = 0;
 
-    public Barril(int x, int y, int direccion) { // direccion: 1 derecha, -1 izquierda
-        super(x, y, 24, 24);
-        this.velX = VELOCIDAD * direccion;
+    public Barril(int x, int y) {
+        super(x, y, W, H);
+        this.velX = VELOCIDAD;
         this.velY = 0;
         this.enElSuelo = false;
     }
 
-    public boolean isActivo() { return posicion.getY() < 900; } // cae fuera de pantalla
+    public boolean isActivo() { return posicion.getY() < 900; }
 
     @Override
     public void update() {}
 
-    // Recibe las plataformas para manejar física
     public void update(List<Plataforma> plataformas) {
         velY += GRAVEDAD;
         posicion.setX(posicion.getX() + velX);
@@ -33,33 +34,40 @@ public class Barril extends GameObject {
 
         enElSuelo = false;
 
+        int   centroX = (int) posicion.getX() + W / 2;
+        float piesY   = (float) posicion.getY() + H;
+
         for (Plataforma p : plataformas) {
-            int px = (int) posicion.getX() + 12; // centro del barril
-            int superficieY = p.getYEnX(px);
+            float platX  = (float) p.getPosicion().getX();
+            float platX2 = platX + p.width;
+            boolean dentroX = (posicion.getX() + W) > platX
+                           && posicion.getX() < platX2;
+            if (!dentroX) continue;
 
-            boolean dentroX = posicion.getX() + 24 > p.getPosicion().getX()
-                           && posicion.getX() < p.getPosicion().getX() + p.width;
+            float superficieY = p.getYEnX(centroX);
+            float margen = Math.abs(velY) + GRAVEDAD + 2;
 
-            if (dentroX && posicion.getY() + 24 >= superficieY
-                        && posicion.getY() + 24 <= superficieY + 16
-                        && velY >= 0) {
-
-                posicion.setY(superficieY - 24);
-                velY = 0;
+            if (velY >= 0 && piesY >= superficieY && piesY <= superficieY + margen) {
+                posicion.setY(superficieY - H);
+                velY      = 0;
                 enElSuelo = true;
 
-                // Ajustar velX según inclinación de la plataforma
-                float pendiente = p.getInclinacion() / (float) p.width;
-                velX = VELOCIDAD * (pendiente >= 0 ? 1 : -1) * (1 + Math.abs(pendiente));
+                // Solo ajustar dirección si hay inclinación
+                if (p.getInclinacion() != 0) {
+                    float pendiente = p.getInclinacion() / (float) p.width;
+                    velX = VELOCIDAD * (pendiente >= 0 ? 1 : -1) * (1 + Math.abs(pendiente) * 0.5f);
+                }
             }
         }
 
-        // Si llega al borde de una plataforma, cae
+        if (posicion.getX() <= 0) velX = VELOCIDAD;
+        if (posicion.getX() + W >= 784) velX = -VELOCIDAD;
+
         rotacion = (rotacion + 5) % 360;
     }
 
     public Rectangle getBounds() {
-        return new Rectangle((int) posicion.getX(), (int) posicion.getY(), 24, 24);
+        return new Rectangle((int) posicion.getX(), (int) posicion.getY(), W, H);
     }
 
     @Override
@@ -67,10 +75,9 @@ public class Barril extends GameObject {
         int x = (int) posicion.getX();
         int y = (int) posicion.getY();
         g.setColor(new Color(120, 60, 20));
-        g.fillOval(x, y, 24, 24);
+        g.fillOval(x, y, W, H);
         g.setColor(Color.GRAY);
-        g.drawOval(x, y, 24, 24);
-        // Línea que simula rotación
+        g.drawOval(x, y, W, H);
         double rad = Math.toRadians(rotacion);
         g.drawLine(x + 12, y + 12,
                    x + 12 + (int)(10 * Math.cos(rad)),
