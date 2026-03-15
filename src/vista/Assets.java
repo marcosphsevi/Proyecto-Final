@@ -3,6 +3,7 @@ package vista;
 import java.awt.image.BufferedImage;
 
 public class Assets {
+<<<<<<< HEAD
 
     public static BufferedImage player;
     public static BufferedImage[] barrilRodando; // sprites 1-4
@@ -22,3 +23,15 @@ public class Assets {
         }
     }
 }
+=======
+	
+	public static BufferedImage player;
+	public static BufferedImage barril;
+	
+	public static void init() {
+		player = Loader.imageLoader("/resource/marioBros.png");
+		barril = Loader.imageLoader("/resource/barril.png");
+	}
+
+}
+>>>>>>> 9fa3af5df3e32ce1bf58ab4dbfbcfe85c15b773c
