@@ -35,7 +35,7 @@ public class GameState {
         Iterator<Barril> it = barriles.iterator();
         while (it.hasNext()) {
             Barril b = it.next();
-            b.update(nivel.getPlataformas());
+            b.update(nivel.getPlataformas(), nivel.getEscaleras());
             if (!b.isActivo()) it.remove();
 
             // Colisión con jugador
