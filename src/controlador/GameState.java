@@ -34,14 +34,13 @@ public class GameState {
         Iterator<Barril> it = barriles.iterator();
         while (it.hasNext()) {
             Barril b = it.next();
-            b.update(nivel.getPlataformas());
+            b.update(nivel.getPlataformas(), nivel.getEscaleras()); // ← pasamos escaleras
 
             if (!b.isActivo()) {
                 it.remove();
-                continue; // ← ya no existe, no comprobar colisión
+                continue;
             }
 
-            // Colisión con jugador
             if (b.getBounds().intersects(player.getBounds())) {
                 player.morir();
             }
