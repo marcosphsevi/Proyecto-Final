@@ -49,7 +49,45 @@ public class Nivel {
         plataformas.add(new Plataforma(308, 84, 167, 14, 0));
 
         // ESCALERAS
-        // (por definir)
+        
+        //escalera primer piso
+        escaleras.add(new Escalera(643, 653, 28, 86));
+        
+        //escalera rota primer piso
+        escaleras.add(new Escalera(279, 727, 28, 28));
+        
+        //escalera 1 segundo piso
+        escaleras.add(new Escalera(336, 523, 28, 114));
+        
+        //escalera 2 segundo piso
+        escaleras.add(new Escalera(112, 539, 28, 84));
+        
+        //escalera 1 tercer piso
+        escaleras.add(new Escalera(392, 407, 28, 116));
+        
+        //escalera 2 tercer piso
+        escaleras.add(new Escalera(643, 421, 28, 86));
+        
+        //escalera rota tercer piso
+        escaleras.add(new Escalera(223, 504, 28, 28));
+        
+        //escalera 1 cuato piso
+        escaleras.add(new Escalera(252, 299, 28, 100));
+        
+        //escalera 2 cuarto piso
+        escaleras.add(new Escalera(112, 306, 28, 86));
+
+        //escalera rota cuarto piso
+        escaleras.add(new Escalera(588, 392, 28, 28));
+        
+        //escalera rota quinto piso
+        escaleras.add(new Escalera(308, 251, 28, 47));
+        
+        //escalera quingo piso
+        escaleras.add(new Escalera(643, 190, 28, 86));
+        
+        //ultima escalera
+        escaleras.add(new Escalera(448, 83, 28, 99));
     }
 
     public TileMap getTileMap()              { return tileMap;     }
@@ -59,7 +97,7 @@ public class Nivel {
     public void draw(Graphics g) {
         tileMap.draw(g);
         // Descomentar para depurar hitboxes:
-        // for (Plataforma p : plataformas) p.draw(g);
-        // for (Escalera e   : escaleras)   e.draw(g);
+        //for (Plataforma p : plataformas) p.draw(g);
+        //for (Escalera e   : escaleras)   e.draw(g);
     }
 }

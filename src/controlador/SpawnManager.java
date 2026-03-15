@@ -16,7 +16,7 @@ public class SpawnManager {
             timer = 0;
             // Spawn en la parte superior izquierda, dirección aleatoria
             int dir = rand.nextBoolean() ? 1 : -1;
-            barriles.add(new Barril(100, 110, dir));
+            //barriles.add(new Barril(100, 110, dir));
         }
     }
 }

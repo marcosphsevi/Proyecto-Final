@@ -10,7 +10,7 @@ import controlador.Teclado;
 public class Jugador extends GameObject {
 
     private static final float VELOCIDAD    = 3f;
-    private static final float FUERZA_SALTO = -10.5f;
+    private static final float FUERZA_SALTO = -6.2f;
     private static final float GRAVEDAD     = 0.4f;
     private static final float VEL_ESCALERA = 2.5f;
 
@@ -50,6 +50,13 @@ public class Jugador extends GameObject {
                           + escaleraActual.width / 2.0 - W / 2.0);
             if (teclado.izquierda || teclado.derecha) enEscalera = false;
 
+            // Si el jugador llega al fondo de la escalera, salir
+            float fondoEscalera = (float)(escaleraActual.getPosicion().getY() + escaleraActual.height);
+            if (posicion.getY() + H >= fondoEscalera) {
+                posicion.setY(fondoEscalera - H);
+                enEscalera = false;
+            }
+
         } else {
             enEscalera = false;
 
@@ -80,7 +87,6 @@ public class Jugador extends GameObject {
 
                 if (!dentroX) continue;
 
-                // Superficie en el centro X del jugador (soporta inclinación)
                 float superficieY = p.getYEnX(centroX);
                 float margen = Math.abs(velY) + GRAVEDAD + 2;
 

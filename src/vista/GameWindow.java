@@ -4,8 +4,8 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-//import java.awt.event.MouseMotionAdapter;
-//import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.BorderLayout;
 
@@ -41,14 +41,14 @@ public class GameWindow extends JFrame {
         canvas.setMinimumSize(new Dimension(ANCHO, LARGO));
         canvas.setFocusable(true);
         canvas.addKeyListener(teclado);
-        /*
+        
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
                 System.out.println("X: " + e.getX() + "  Y: " + e.getY());
             }
         });
-		*/
+		
         mostrarMenu();
         setVisible(true);
     }
