@@ -18,16 +18,16 @@ public class Barril extends GameObject {
 
     private float probabilidadEscalera;
 
-    private static final float GRAVEDAD  = 0.4f;
-    private static final float VELOCIDAD = 3f;
+    private static final float GRAVEDAD   = 0.4f;
+    private static final float VELOCIDAD  = 3f;
     private static final float VEL_BAJADA = 2.5f;
 
     private static final int W = 24;
     private static final int H = 24;
 
-    // Plataforma sobre la que está parado al iniciar el descenso
-    // (la ignoramos durante el descenso para no "aterrizar" en ella)
     private Plataforma plataformaOrigen = null;
+    // Y mínima que debe superar el barril antes de poder aterrizar
+    private float yMinimaDescenso = 0;
 
     private int rotacion = 0;
     private BufferedImage sprite;
@@ -69,7 +69,6 @@ public class Barril extends GameObject {
 
             for (Plataforma p : plataformas) {
 
-                // Ignorar la plataforma desde la que empezamos a bajar
                 if (p == plataformaOrigen) continue;
 
                 float platX  = (float) p.getPosicion().getX();
@@ -81,12 +80,16 @@ public class Barril extends GameObject {
 
                 float superficie = p.getYEnX(centroX);
 
-                // Margen generoso para no atravesar la plataforma
+                // La plataforma debe estar POR DEBAJO del punto de inicio del descenso
+                // Esto evita que detecte plataformas superiores o la propia zona de origen
+                if (superficie < yMinimaDescenso) continue;
+
                 if (piesY >= superficie - 2) {
                     posicion.setY(superficie - H);
                     bajandoEscalera  = false;
                     decisionTomada   = false;
                     plataformaOrigen = null;
+                    yMinimaDescenso  = 0;
                     velX = VELOCIDAD;
                     velY = 0;
                     enElSuelo = true;
@@ -109,7 +112,6 @@ public class Barril extends GameObject {
                 int piesBarril  = (int) posicion.getY() + H;
                 int topEscalera = re.y;
 
-                // La escalera debe empezar justo donde están los pies del barril
                 boolean encima = piesBarril >= topEscalera - 8 &&
                                  piesBarril <= topEscalera + 14;
 
@@ -118,13 +120,14 @@ public class Barril extends GameObject {
 
                     if (Math.random() < probabilidadEscalera) {
 
-                        // Guardar plataforma actual para ignorarla al bajar
                         plataformaOrigen = plataformaEnContacto(plataformas, centroX);
+                        // Guardar Y de los pies actuales: solo aterrizamos en plataformas
+                        // cuya superficie esté MÁS ABAJO que este valor
+                        yMinimaDescenso = (float) posicion.getY() + H + 20;
 
                         bajandoEscalera = true;
                         velX = 0;
                         velY = 0;
-                        // Centrar en la escalera
                         posicion.setX(re.x + re.width / 2.0 - W / 2.0);
                     }
                     break;
@@ -156,9 +159,9 @@ public class Barril extends GameObject {
 
             if (velY >= 0 && piesY >= superficie && piesY <= superficie + margen) {
                 posicion.setY(superficie - H);
-                velY      = 0;
-                enElSuelo = true;
-                decisionTomada = false; // nueva plataforma → nueva oportunidad
+                velY           = 0;
+                enElSuelo      = true;
+                decisionTomada = false;
 
                 if (p.getInclinacion() != 0) {
                     float pendiente = p.getInclinacion() / (float) p.width;
@@ -177,7 +180,6 @@ public class Barril extends GameObject {
         rotacion += velX * 4;
     }
 
-    /** Devuelve la plataforma sobre la que está parado el barril ahora mismo */
     private Plataforma plataformaEnContacto(List<Plataforma> plataformas, int centroX) {
         int piesY = (int) posicion.getY() + H;
         for (Plataforma p : plataformas) {
