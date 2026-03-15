@@ -26,7 +26,6 @@ public class Barril extends GameObject {
     private static final int H = 24;
 
     private Plataforma plataformaOrigen = null;
-    // Y mínima que debe superar el barril antes de poder aterrizar
     private float yMinimaDescenso = 0;
 
     private int rotacion = 0;
@@ -80,8 +79,6 @@ public class Barril extends GameObject {
 
                 float superficie = p.getYEnX(centroX);
 
-                // La plataforma debe estar POR DEBAJO del punto de inicio del descenso
-                // Esto evita que detecte plataformas superiores o la propia zona de origen
                 if (superficie < yMinimaDescenso) continue;
 
                 if (piesY >= superficie - 2) {
@@ -121,9 +118,7 @@ public class Barril extends GameObject {
                     if (Math.random() < probabilidadEscalera) {
 
                         plataformaOrigen = plataformaEnContacto(plataformas, centroX);
-                        // Guardar Y de los pies actuales: solo aterrizamos en plataformas
-                        // cuya superficie esté MÁS ABAJO que este valor
-                        yMinimaDescenso = (float) posicion.getY() + H + 20;
+                        yMinimaDescenso  = (float) posicion.getY() + H + 20;
 
                         bajandoEscalera = true;
                         velX = 0;
@@ -174,7 +169,14 @@ public class Barril extends GameObject {
         // ═══════════════════════════════════════════
         // BORDES
         // ═══════════════════════════════════════════
-        if (posicion.getX() <= 0)       velX =  VELOCIDAD;
+        if (posicion.getX() <= 0) {
+            if (posicion.getY() + H > 740) {
+                // Plataforma inferior: el barril cae al vacío y se elimina
+                posicion.setY(1000);
+            } else {
+                velX = VELOCIDAD;
+            }
+        }
         if (posicion.getX() + W >= 784) velX = -VELOCIDAD;
 
         rotacion += velX * 4;
