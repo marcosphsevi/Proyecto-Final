@@ -19,11 +19,10 @@ public class GameState {
     private SpawnManager spawnManager;
 
     public GameState(Teclado teclado) {
-        nivel        = new Nivel();
-        barriles     = new ArrayList<>();
+        nivel = new Nivel();
+        barriles = new ArrayList<>();
         spawnManager = new SpawnManager();
-        player       = new Jugador(new Vector2D(80, 692), Assets.player, teclado,
-                                   nivel.getPlataformas(), nivel.getEscaleras());
+        player = new Jugador(new Vector2D(80, 692), Assets.player, teclado, nivel.getPlataformas(), nivel.getEscaleras());
     }
 
     public void update() {
@@ -31,14 +30,16 @@ public class GameState {
 
         spawnManager.update(barriles);
 
-        // Actualizar barriles y eliminar los que salen de pantalla
         Iterator<Barril> it = barriles.iterator();
         while (it.hasNext()) {
             Barril b = it.next();
-            b.update(nivel.getPlataformas(), nivel.getEscaleras());
-            if (!b.isActivo()) it.remove();
+            b.update(nivel.getPlataformas(), nivel.getEscaleras()); // ← pasamos escaleras
 
-            // Colisión con jugador
+            if (!b.isActivo()) {
+                it.remove();
+                continue;
+            }
+
             if (b.getBounds().intersects(player.getBounds())) {
                 player.morir();
             }

@@ -1,53 +1,39 @@
 package modelo;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Random;
 
 import vista.Assets;
 
 public class Barril extends GameObject {
 
     private float velX, velY;
+    private static final float GRAVEDAD      = 0.4f;
+    private static final float VELOCIDAD     = 3f;
+    private static final int   W             = 24;
+    private static final int   H             = 24;
+    private static final float PROB_ESCALERA = 0.4f;
 
-    private boolean enElSuelo;
-    private boolean bajandoEscalera;
-    private boolean decisionTomada;
+    // Animación
+    private int frameActual   = 0;
+    private int ticksFrame    = 0;
+    private static final int TICKS_POR_FRAME = 6; // cada 6 frames cambia sprite
 
-    private float probabilidadEscalera;
-
-    private static final float GRAVEDAD   = 0.4f;
-    private static final float VELOCIDAD  = 3f;
-    private static final float VEL_BAJADA = 2.5f;
-
-    private static final int W = 24;
-    private static final int H = 24;
-
-    private Plataforma plataformaOrigen = null;
-    private float yMinimaDescenso = 0;
-
-    private int rotacion = 0;
-    private BufferedImage sprite;
+    private boolean bajandoEscalera = false;
+    private Escalera ultimaEscalera = null;
+    private Random rand = new Random();
 
     public Barril(int x, int y) {
         super(x, y, W, H);
-        velX = VELOCIDAD;
-        velY = 0;
-        enElSuelo       = false;
-        bajandoEscalera = false;
-        decisionTomada  = false;
-        sprite = Assets.barril;
-
-        float tipo = (float) Math.random();
-        if      (tipo < 0.33f) probabilidadEscalera = 0.00f;
-        else if (tipo < 0.66f) probabilidadEscalera = 0.40f;
-        else                   probabilidadEscalera = 0.85f;
+        this.velX = VELOCIDAD;
+        this.velY = 0;
     }
 
     public boolean isActivo() {
-        return posicion.getY() < 900;
+        return !(posicion.getX() <= 25 && posicion.getY() >= 720);
     }
 
     @Override
@@ -55,142 +41,107 @@ public class Barril extends GameObject {
 
     public void update(List<Plataforma> plataformas, List<Escalera> escaleras) {
 
-        int centroX = (int) posicion.getX() + W / 2;
-
-        // ═══════════════════════════════════════════
-        // MODO BAJANDO ESCALERA
-        // ═══════════════════════════════════════════
+        // ── Modo escalera ─────────────────────────────────────────────
         if (bajandoEscalera) {
+            Escalera escaleraActual = escaleraEnContacto(escaleras);
+            if (escaleraActual != null) {
+                posicion.setX(escaleraActual.getPosicion().getX() + escaleraActual.width / 2.0 - W / 2.0);
+                posicion.setY(posicion.getY() + VELOCIDAD);
+                velY = 0;
 
-            posicion.setY(posicion.getY() + VEL_BAJADA);
-
-            int piesY = (int) posicion.getY() + H;
-
-            for (Plataforma p : plataformas) {
-
-                if (p == plataformaOrigen) continue;
-
-                float platX  = (float) p.getPosicion().getX();
-                float platX2 = platX + p.width;
-
-                boolean dentroX = (posicion.getX() + W) > platX &&
-                                   posicion.getX()       < platX2;
-                if (!dentroX) continue;
-
-                float superficie = p.getYEnX(centroX);
-
-                if (superficie < yMinimaDescenso) continue;
-
-                if (piesY >= superficie - 2) {
-                    posicion.setY(superficie - H);
-                    bajandoEscalera  = false;
-                    decisionTomada   = false;
-                    plataformaOrigen = null;
-                    yMinimaDescenso  = 0;
-                    velX = VELOCIDAD;
-                    velY = 0;
-                    enElSuelo = true;
-                    break;
+                float fondoEscalera = (float)(escaleraActual.getPosicion().getY() + escaleraActual.height);
+                if (posicion.getY() + H >= fondoEscalera) {
+                    posicion.setY(fondoEscalera - H);
+                    bajandoEscalera = false;
                 }
-            }
-            return;
-        }
 
-        // ═══════════════════════════════════════════
-        // DETECCIÓN DE ESCALERA BAJO EL BARRIL
-        // ═══════════════════════════════════════════
-        if (enElSuelo && !decisionTomada) {
-
-            for (Escalera esc : escaleras) {
-                Rectangle re = esc.getBounds();
-
-                boolean alineadoX = centroX >= re.x && centroX <= re.x + re.width;
-
-                int piesBarril  = (int) posicion.getY() + H;
-                int topEscalera = re.y;
-
-                boolean encima = piesBarril >= topEscalera - 8 &&
-                                 piesBarril <= topEscalera + 14;
-
-                if (alineadoX && encima) {
-                    decisionTomada = true;
-
-                    if (Math.random() < probabilidadEscalera) {
-
-                        plataformaOrigen = plataformaEnContacto(plataformas, centroX);
-                        yMinimaDescenso  = (float) posicion.getY() + H + 20;
-
-                        bajandoEscalera = true;
-                        velX = 0;
-                        velY = 0;
-                        posicion.setX(re.x + re.width / 2.0 - W / 2.0);
-                    }
-                    break;
-                }
+                avanzarFrame(2); // alterna entre 2 sprites (escalera)
+                return;
+            } else {
+                bajandoEscalera = false;
             }
         }
 
-        // ═══════════════════════════════════════════
-        // FÍSICA NORMAL
-        // ═══════════════════════════════════════════
+        // ── Modo normal ───────────────────────────────────────────────
         velY += GRAVEDAD;
         posicion.setX(posicion.getX() + velX);
         posicion.setY(posicion.getY() + velY);
 
-        enElSuelo = false;
-
-        int piesY = (int) posicion.getY() + H;
+        int   centroX = (int) posicion.getX() + W / 2;
+        float piesY   = (float) posicion.getY() + H;
 
         for (Plataforma p : plataformas) {
             float platX  = (float) p.getPosicion().getX();
             float platX2 = platX + p.width;
-
-            boolean dentroX = (posicion.getX() + W) > platX &&
-                               posicion.getX()       < platX2;
+            boolean dentroX = (posicion.getX() + W) > platX
+                           && posicion.getX() < platX2;
             if (!dentroX) continue;
 
-            float superficie = p.getYEnX(centroX);
-            float margen     = Math.abs(velY) + GRAVEDAD + 2;
+            float superficieY = p.getYEnX(centroX);
+            float margen = Math.abs(velY) + GRAVEDAD + 2;
 
-            if (velY >= 0 && piesY >= superficie && piesY <= superficie + margen) {
-                posicion.setY(superficie - H);
-                velY           = 0;
-                enElSuelo      = true;
-                decisionTomada = false;
+            if (velY >= 0 && piesY >= superficieY && piesY <= superficieY + margen) {
+                posicion.setY(superficieY - H);
+                velY = 0;
 
-                if (p.getInclinacion() != 0) {
+                Escalera escaleraCercana = escaleraDebajo(escaleras);
+                if (escaleraCercana != null && escaleraCercana != ultimaEscalera) {
+                    ultimaEscalera = escaleraCercana;
+                    if (rand.nextFloat() < PROB_ESCALERA) {
+                        bajandoEscalera = true;
+                    }
+                }
+
+                if (!bajandoEscalera && p.getInclinacion() != 0) {
                     float pendiente = p.getInclinacion() / (float) p.width;
-                    velX = VELOCIDAD * (pendiente >= 0 ? 1 : -1)
-                           * (1 + Math.abs(pendiente) * 0.5f);
+                    velX = VELOCIDAD * (pendiente >= 0 ? 1 : -1) * (1 + Math.abs(pendiente) * 0.5f);
                 }
             }
         }
 
-        // ═══════════════════════════════════════════
-        // BORDES
-        // ═══════════════════════════════════════════
-        if (posicion.getX() <= 0) {
-            if (posicion.getY() + H > 740) {
-                // Plataforma inferior: el barril cae al vacío y se elimina
-                posicion.setY(1000);
-            } else {
-                velX = VELOCIDAD;
-            }
-        }
+        if (posicion.getX() <= 0) velX = VELOCIDAD;
         if (posicion.getX() + W >= 784) velX = -VELOCIDAD;
 
-        rotacion += velX * 4;
+        avanzarFrame(4); // alterna entre 4 sprites (rodando)
     }
 
-    private Plataforma plataformaEnContacto(List<Plataforma> plataformas, int centroX) {
-        int piesY = (int) posicion.getY() + H;
-        for (Plataforma p : plataformas) {
-            float platX  = (float) p.getPosicion().getX();
-            float platX2 = platX + p.width;
-            boolean dentroX = (posicion.getX() + W) > platX && posicion.getX() < platX2;
-            if (!dentroX) continue;
-            float superficie = p.getYEnX(centroX);
-            if (Math.abs(piesY - superficie) <= 6) return p;
+    /**
+     * Avanza el frame de animación ciclando entre totalFrames.
+     * Si rueda hacia la izquierda (velX < 0) va al revés.
+     */
+    private void avanzarFrame(int totalFrames) {
+        ticksFrame++;
+        if (ticksFrame >= TICKS_POR_FRAME) {
+            ticksFrame = 0;
+            if (!bajandoEscalera && velX < 0) {
+                frameActual = (frameActual - 1 + totalFrames) % totalFrames;
+            } else {
+                frameActual = (frameActual + 1) % totalFrames;
+            }
+        }
+    }
+
+    private Escalera escaleraDebajo(List<Escalera> escaleras) {
+        int centroX = (int) posicion.getX() + W / 2;
+        float piesY = (float) posicion.getY() + H;
+
+        for (Escalera e : escaleras) {
+            float ex  = (float) e.getPosicion().getX();
+            float ex2 = ex + e.width;
+            float ey  = (float) e.getPosicion().getY();
+
+            boolean dentroX = centroX >= ex && centroX <= ex2;
+            boolean enTope  = Math.abs(piesY - ey) < 10;
+
+            if (dentroX && enTope) return e;
+        }
+        return null;
+    }
+
+    private Escalera escaleraEnContacto(List<Escalera> escaleras) {
+        Rectangle bounds = getBounds();
+        for (Escalera e : escaleras) {
+            if (e.getBounds().intersects(bounds)) return e;
         }
         return null;
     }
@@ -201,11 +152,21 @@ public class Barril extends GameObject {
 
     @Override
     public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
         int x = (int) posicion.getX();
         int y = (int) posicion.getY();
-        g2.rotate( Math.toRadians(rotacion), x + W / 2.0, y + H / 2.0);
-        g2.drawImage(sprite, x, y, W, H, null);
-        g2.rotate(-Math.toRadians(rotacion), x + W / 2.0, y + H / 2.0);
+
+        BufferedImage sprite;
+        if (bajandoEscalera) {
+            sprite = Assets.barrilEscalera != null ? Assets.barrilEscalera[frameActual % 2] : null;
+        } else {
+            sprite = Assets.barrilRodando != null ? Assets.barrilRodando[frameActual % 4] : null;
+        }
+
+        if (sprite != null) {
+            g.drawImage(sprite, x, y, W, H, null);
+        } else {
+            // fallback si no cargaron los sprites
+            g.drawOval(x, y, W, H);
+        }
     }
 }

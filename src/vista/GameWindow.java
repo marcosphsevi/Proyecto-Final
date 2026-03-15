@@ -4,8 +4,8 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseEvent;
+//import java.awt.event.MouseMotionAdapter;
+//import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.BorderLayout;
 
