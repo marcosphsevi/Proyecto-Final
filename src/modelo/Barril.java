@@ -15,10 +15,10 @@ public class Barril extends GameObject {
     private static final int   H = 24;
     private int rotacion = 0;
 
-    public Barril(int x, int y, int direccion) {
+    public Barril(int x, int y) {
         super(x, y, W, H);
-        this.velX      = VELOCIDAD * direccion;
-        this.velY      = 0;
+        this.velX = VELOCIDAD;
+        this.velY = 0;
         this.enElSuelo = false;
     }
 
@@ -60,7 +60,7 @@ public class Barril extends GameObject {
             }
         }
 
-        if (posicion.getX() <= 0)       velX =  VELOCIDAD;
+        if (posicion.getX() <= 0) velX = VELOCIDAD;
         if (posicion.getX() + W >= 784) velX = -VELOCIDAD;
 
         rotacion = (rotacion + 5) % 360;
