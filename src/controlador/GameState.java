@@ -70,7 +70,6 @@ public class GameState {
 
     public void update() {
         if (gameOver || victoria) {
-            MusicManager.stop();
             return;
         }
 
@@ -109,6 +108,7 @@ public class GameState {
             if (b.getBounds().intersects(player.getBounds())) {
                 player.morir();
                 gameOver = true;
+                MusicManager.stop();
             }
         }
 
@@ -116,6 +116,7 @@ public class GameState {
         Rectangle rectPrincesa = new Rectangle(PRINCESA_X, PRINCESA_Y, PRINCESA_W, PRINCESA_H);
         if (player.getBounds().intersects(rectPrincesa)) {
             victoria = true;
+            MusicManager.stop();
         }
     }
 
