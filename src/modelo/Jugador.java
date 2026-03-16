@@ -3,26 +3,35 @@ package modelo;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import controlador.Teclado;
+import vista.Assets;
 
 public class Jugador extends GameObject {
 
 	private static final float VELOCIDAD = 3f;
-	private static final float FUERZA_SALTO = -6.2f;
+	private static final float FUERZA_SALTO = -6.5f;
 	private static final float GRAVEDAD = 0.4f;
 	private static final float VEL_ESCALERA = 2.5f;
 	private static final float ROZAMIENTO = 0.95f; // freno en el aire (0=para inmediato, 1=sin freno)
 
-	private static final int W = 32;
-	private static final int H = 64;
+	private static final int W = 48;
+	private static final int H = 48;
 
 	private float velX = 0;
 	private float velY = 0;
 	private boolean enElSuelo = false;
 	private boolean enEscalera = false;
 	private boolean vivo = true;
+
+	// ── Animación ─────────────────────────────────────────────────────
+	private static final int ANIM_TICKS = 8; // frames entre cambio de sprite
+	private int animTick      = 0;
+	private int animFrame     = 0; // alterna 0 ↔ 1 para ciclos de 2 frames
+	private boolean miraDerecha = true;
 
 	private Teclado teclado;
 	private List<Plataforma> plataformas;
@@ -118,6 +127,16 @@ public class Jugador extends GameObject {
 		// ── Límites de pantalla ────────────────────────────────────────
 		if (posicion.getX() < 0)   posicion.setX(0);
 		if (posicion.getX() > 736) posicion.setX(736);
+
+		// ── Actualizar dirección y animación ──────────────────────────
+		if (velX > 0.1f) miraDerecha = true;
+		else if (velX < -0.1f) miraDerecha = false;
+
+		animTick++;
+		if (animTick >= ANIM_TICKS) {
+			animTick  = 0;
+			animFrame = 1 - animFrame; // alterna 0 ↔ 1
+		}
 	}
 
 	private Escalera escaleraEnContacto() {
@@ -144,11 +163,42 @@ public class Jugador extends GameObject {
 	@Override
 	public void draw(Graphics g) {
 		if (!vivo) return;
-		if (texture != null)
-			g.drawImage(texture, (int) posicion.getX(), (int) posicion.getY(), W, H, null);
-		else {
+
+		BufferedImage sprite = getSpriteActual();
+
+		if (sprite != null) {
+			if (miraDerecha) {
+				g.drawImage(sprite, (int) posicion.getX(), (int) posicion.getY(), W, H, null);
+			} else {
+				// Voltear horizontalmente
+				AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+				tx.translate(-sprite.getWidth(), 0);
+				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				BufferedImage flipped = op.filter(sprite, null);
+				g.drawImage(flipped, (int) posicion.getX(), (int) posicion.getY(), W, H, null);
+			}
+		} else {
 			g.setColor(Color.WHITE);
 			g.fillRect((int) posicion.getX(), (int) posicion.getY(), W, H);
 		}
+	}
+
+	private BufferedImage getSpriteActual() {
+		if (Assets.hampter == null) return texture;
+
+		if (enEscalera) {
+			// Sprites 5 y 6 (índices 4 y 5): alterna al subir/bajar escalera
+			return Assets.hampter[4 + animFrame];
+		}
+		if (!enElSuelo) {
+			// Sprite 4 (índice 3): en el aire / saltando
+			return Assets.hampter[3];
+		}
+		if (Math.abs(velX) > 0.1f) {
+			// Sprites 2 y 3 (índices 1 y 2): caminando
+			return Assets.hampter[1 + animFrame];
+		}
+		// Sprite 1 (índice 0): idle
+		return Assets.hampter[0];
 	}
 }

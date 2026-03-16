@@ -14,8 +14,15 @@ public class Assets {
     // Malo (2 frames: reposo y lanzando)
     public static BufferedImage[] malo;
 
+    // Hampter (6 sprites: 1=idle, 2-3=caminar, 4=salto, 5-6=escalera)
+    public static BufferedImage[] hampter;
+
     public static void init() {
         player = Loader.imageLoader("/resource/marioBros.png");
+
+        hampter = new BufferedImage[6];
+        for (int i = 0; i < 6; i++)
+            hampter[i] = Loader.imageLoader("/resource/hampter/" + (i + 1) + ".PNG");
 
         barrilRodando = new BufferedImage[4];
         for (int i = 0; i < 4; i++)
