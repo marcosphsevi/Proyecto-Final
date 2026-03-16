@@ -15,7 +15,7 @@ public class GameOverPanel extends JPanel {
 
         fondo = new ImageIcon(getClass().getResource("/resource/GameOver.png")).getImage();
 
-        JButton reintentar = crearBoton("RETRY");
+        JButton reintentar = crearBoton("RETRY?");
         JButton salir      = crearBoton("EXIT");
 
         reintentar.setBounds(310, 570, 200, 50);
