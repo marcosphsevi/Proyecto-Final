@@ -7,12 +7,12 @@ public class Controlador implements Runnable {
 
     private GameWindow gameWindow;
     private Thread hilo;
-    private volatile boolean corriendo = false; // volatile para visibilidad entre hilos
+    private volatile boolean corriendo   = false;
     private volatile boolean juegoActivo = false;
 
     private static final int FPS = 30;
-    private double TARGETTIME = 1_000_000_000.0 / FPS;
-    private double delta = 0;
+    private double TARGETTIME    = 1_000_000_000.0 / FPS;
+    private double delta         = 0;
     public static int FPS_PROMEDIO = FPS;
 
     private GameState gameState;
@@ -29,16 +29,19 @@ public class Controlador implements Runnable {
         Assets.init();
         gameState = new GameState(gameWindow.getTeclado());
     }
-    
-    /** Arranca el hilo (se llama desde Main) */
+
     public void start() {
         corriendo = true;
         hilo = new Thread(this);
         hilo.start();
     }
 
-    /** Activa el game loop (se llama cuando el usuario presiona JUGAR) */
     public void startGame() {
+        init();
+        juegoActivo = true;
+    }
+
+    public void reiniciarJuego() {
         init();
         juegoActivo = true;
     }
@@ -47,7 +50,7 @@ public class Controlador implements Runnable {
     public void run() {
         long lastTime = System.nanoTime();
         long ahora;
-        int fps = 0;
+        int  fps    = 0;
         long tiempo = 0;
 
         while (corriendo) {
@@ -56,7 +59,7 @@ public class Controlador implements Runnable {
             lastTime = ahora;
 
             if (juegoActivo) {
-                delta += elapsed / TARGETTIME;
+                delta  += elapsed / TARGETTIME;
                 tiempo += elapsed;
 
                 if (delta >= 1) {
@@ -68,11 +71,17 @@ public class Controlador implements Runnable {
 
                 if (tiempo >= 1_000_000_000) {
                     FPS_PROMEDIO = fps;
-                    fps = 0;
+                    fps   = 0;
                     tiempo = 0;
                 }
+
+                // Detectar game over
+                if (gameState.isGameOver()) {
+                    juegoActivo = false;
+                    gameWindow.mostrarGameOver();
+                }
+
             } else {
-                // Mientras estamos en el menú, dormir para no quemar CPU
                 try {
                     Thread.sleep(16);
                 } catch (InterruptedException e) {

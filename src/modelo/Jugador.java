@@ -131,7 +131,11 @@ public class Jugador extends GameObject {
 	public Rectangle getBounds() {
 		return new Rectangle((int) posicion.getX(), (int) posicion.getY(), W, H);
 	}
-
+	
+	public boolean isDead() {
+	    return !vivo;
+	}
+	
 	public void morir() {
 		vivo = false;
 		System.out.println("¡Has muerto!");

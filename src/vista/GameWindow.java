@@ -4,12 +4,11 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-//import java.awt.event.MouseMotionAdapter;
-//import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
 
 import controlador.Controlador;
@@ -41,14 +40,7 @@ public class GameWindow extends JFrame {
         canvas.setMinimumSize(new Dimension(ANCHO, LARGO));
         canvas.setFocusable(true);
         canvas.addKeyListener(teclado);
-        
-        /*canvas.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                System.out.println("X: " + e.getX() + "  Y: " + e.getY());
-            }
-        });*/
-		
+
         mostrarMenu();
         setVisible(true);
     }
@@ -68,6 +60,16 @@ public class GameWindow extends JFrame {
         repaint();
     }
 
+    public void mostrarGameOver() {
+        // Se llama desde el hilo del juego → hay que ejecutar en el EDT
+        SwingUtilities.invokeLater(() -> {
+            GameOverPanel gameOverPanel = new GameOverPanel(this);
+            setContentPane(gameOverPanel);
+            revalidate();
+            repaint();
+        });
+    }
+
     public void iniciarJuego() {
         JPanel gamePanel = new JPanel();
         gamePanel.setLayout(new BorderLayout());
@@ -79,6 +81,19 @@ public class GameWindow extends JFrame {
 
         canvas.requestFocusInWindow();
         controlador.startGame();
+    }
+
+    public void reiniciarJuego() {
+        JPanel gamePanel = new JPanel();
+        gamePanel.setLayout(new BorderLayout());
+        gamePanel.add(canvas, BorderLayout.CENTER);
+
+        setContentPane(gamePanel);
+        revalidate();
+        repaint();
+
+        canvas.requestFocusInWindow();
+        controlador.reiniciarJuego();  // nuevo método en Controlador
     }
 
     public void dibujar() {
