@@ -24,6 +24,6 @@ public class SpawnManager {
 	}
 
 	private int siguienteIntervalo() {
-		return 60 + rand.nextInt(61); // entre 3 y 5 segundos
+		return 60 + rand.nextInt(91); // entre 2 y 9 segundos
 	}
 }
