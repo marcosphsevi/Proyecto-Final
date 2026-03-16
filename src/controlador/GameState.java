@@ -13,6 +13,7 @@ import modelo.Nivel;
 import modelo.Vector2D;
 import vista.Assets;
 
+
 public class GameState {
 
     private Jugador      player;
@@ -41,8 +42,9 @@ public class GameState {
     private static final int MALO_TICKS_LANZANDO = 30;
 
     // ── Estado ────────────────────────────────────────────────────────
-    private boolean gameOver = false;
-    private boolean victoria = false;
+    private boolean gameOver      = false;
+    private boolean victoria      = false;
+    private boolean musicaIniciada = false;
 
     public GameState(Teclado teclado) {
         nivel    = new Nivel();
@@ -67,7 +69,15 @@ public class GameState {
     public boolean isVictoria() { return victoria; }
 
     public void update() {
-        if (gameOver || victoria) return;
+        if (gameOver || victoria) {
+            MusicManager.stop();
+            return;
+        }
+
+        if (!musicaIniciada) {
+            MusicManager.play("/resource/music/musicaJuego.wav");
+            musicaIniciada = true;
+        }
 
         player.update();
 
