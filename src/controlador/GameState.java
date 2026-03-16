@@ -22,8 +22,8 @@ public class GameState {
 
     // ── Princesa ──────────────────────────────────────────────────────
     // Posición: plataforma más alta izquierda → Plataforma(0,182,503,14,0)
-    private static final int PRINCESA_X = 20;
-    private static final int PRINCESA_Y = 118;  // 182 - 64 (altura sprite)
+    private static final int PRINCESA_X = 315;
+    private static final int PRINCESA_Y = 20;   // 84 - 64
     private static final int PRINCESA_W = 40;
     private static final int PRINCESA_H = 64;
 
@@ -34,7 +34,7 @@ public class GameState {
     // ── Malo ──────────────────────────────────────────────────────────
     // Posición: segunda plataforma izquierda → Plataforma(0,384,727,14,43)
     private static final int MALO_X = 20;
-    private static final int MALO_Y = 320;  // 384 - 64
+    private static final int MALO_Y = 118;  // 182 - 64
     private static final int MALO_W = 40;
     private static final int MALO_H = 64;
 
