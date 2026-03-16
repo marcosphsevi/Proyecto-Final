@@ -6,33 +6,24 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import controlador.MusicManager;
 
-public class MenuPanel extends JPanel {
+public class VictoriaPanel extends JPanel {
 
     private Image fondo;
 
-    public MenuPanel(GameWindow window) {
+    public VictoriaPanel(GameWindow window) {
         setLayout(null);
-        fondo = new ImageIcon(getClass().getResource("/resource/menu.png")).getImage();
+        fondo = new ImageIcon(getClass().getResource("/resource/Victoria.png")).getImage();
 
-        // Música de menú en loop
-        MusicManager.play("/resource/music/menu.wav");
+        // Música de victoria en loop
+        MusicManager.play("/resource/music/victory.wav");
 
-        JButton jugar = crearBoton("START");
         JButton salir = crearBoton("EXIT");
-
-        jugar.setBounds(320, 570, 180, 50);
-        salir.setBounds(320, 630, 180, 50);
-
-        jugar.addActionListener(e -> {
-            MusicManager.playOnce("/resource/music/hampter.wav");
-            window.iniciarJuego();
-        });
+        salir.setBounds(310, 570, 200, 50);
         salir.addActionListener(e -> {
             MusicManager.playOnce("/resource/music/hampter.wav");
             System.exit(0);
         });
 
-        add(jugar);
         add(salir);
     }
 

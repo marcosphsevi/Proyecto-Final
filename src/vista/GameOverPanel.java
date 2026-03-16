@@ -6,33 +6,30 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import controlador.MusicManager;
 
-public class MenuPanel extends JPanel {
+public class GameOverPanel extends JPanel {
 
     private Image fondo;
 
-    public MenuPanel(GameWindow window) {
+    public GameOverPanel(GameWindow window) {
         setLayout(null);
-        fondo = new ImageIcon(getClass().getResource("/resource/menu.png")).getImage();
+        fondo = new ImageIcon(getClass().getResource("/resource/GameOver.png")).getImage();
 
-        // Música de menú en loop
-        MusicManager.play("/resource/music/menu.wav");
+        JButton reintentar = crearBoton("RETRY?");
+        JButton salir      = crearBoton("EXIT");
 
-        JButton jugar = crearBoton("START");
-        JButton salir = crearBoton("EXIT");
+        reintentar.setBounds(310, 570, 200, 50);
+        salir.setBounds(310, 630, 200, 50);
 
-        jugar.setBounds(320, 570, 180, 50);
-        salir.setBounds(320, 630, 180, 50);
-
-        jugar.addActionListener(e -> {
+        reintentar.addActionListener(e -> {
             MusicManager.playOnce("/resource/music/hampter.wav");
-            window.iniciarJuego();
+            window.reiniciarJuego();
         });
         salir.addActionListener(e -> {
             MusicManager.playOnce("/resource/music/hampter.wav");
             System.exit(0);
         });
 
-        add(jugar);
+        add(reintentar);
         add(salir);
     }
 
