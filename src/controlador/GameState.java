@@ -46,9 +46,9 @@ public class GameState {
     private boolean musicaIniciada = false;
 
     public GameState(Teclado teclado) {
-        nivel    = new Nivel();
+        nivel = new Nivel();
         barriles = new ArrayList<>();
-        player   = new Jugador(new Vector2D(80, 692), Assets.player, teclado,
+        player = new Jugador(new Vector2D(80, 692), Assets.player, teclado,
                                nivel.getPlataformas(), nivel.getEscaleras());
 
         // Callback: cada vez que spawna un barril, activar animación del malo
@@ -57,11 +57,11 @@ public class GameState {
             maloTicksLanzando = 0;
         });
 
-        teclado.derecha   = false;
-        teclado.abajo     = false;
-        teclado.arriba    = false;
+        teclado.derecha = false;
+        teclado.abajo = false;
+        teclado.arriba = false;
         teclado.izquierda = false;
-        teclado.salto     = false;
+        teclado.salto = false;
     }
 
     public boolean isGameOver() { return gameOver; }
@@ -89,7 +89,7 @@ public class GameState {
         if (maloFrame == 1) {
             maloTicksLanzando++;
             if (maloTicksLanzando >= MALO_TICKS_LANZANDO) {
-                maloFrame         = 0;
+                maloFrame = 0;
                 maloTicksLanzando = 0;
             }
         }

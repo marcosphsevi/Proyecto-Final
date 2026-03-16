@@ -7,9 +7,9 @@ public class Controlador implements Runnable {
     private Thread     hilo;
     private volatile boolean corriendo   = false;
     private volatile boolean juegoActivo = false;
-    private static final int FPS    = 30;
-    private double TARGETTIME       = 1_000_000_000.0 / FPS;
-    private double delta            = 0;
+    private static final int FPS = 30;
+    private double TARGETTIME = 1_000_000_000.0 / FPS;
+    private double delta = 0;
     public static int FPS_PROMEDIO  = FPS;
     private GameState gameState;
 
@@ -65,7 +65,7 @@ public class Controlador implements Runnable {
 
                 if (tiempo >= 1_000_000_000) {
                     FPS_PROMEDIO = fps;
-                    fps    = 0;
+                    fps = 0;
                     tiempo = 0;
                 }
 
@@ -78,6 +78,7 @@ public class Controlador implements Runnable {
                     juegoActivo = false;
                     MusicManager.stop();
                     gameWindow.mostrarVictoria();
+                    SoundManager.play("/resource/music/victory.wav");
                 }
 
             } else {
