@@ -53,10 +53,7 @@ public class GameState {
                                    nivel.getPlataformas(), nivel.getEscaleras());
 
         // Al spawnear un barril, el malo hace su animación
-        spawnManager = new SpawnManager(() -> {
-            maloFrame        = 1;
-            maloTicksLanzando = 0;
-        });
+        spawnManager = new SpawnManager();
     }
 
     public boolean isGameOver() { return gameOver;  }

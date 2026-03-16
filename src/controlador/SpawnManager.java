@@ -6,39 +6,24 @@ import java.util.Random;
 
 public class SpawnManager {
 
-    private int   timer     = 0;
-    private int   intervalo;
-    private Random rand     = new Random();
+	private int timer = 0;
+	private int intervalo;
+	private Random rand = new Random();
 
-    // Tiempo total de juego en frames (a 30 fps)
-    private int framesTotales = 0;
+	public SpawnManager() {
+		intervalo = siguienteIntervalo(); // primer intervalo al arrancar
+	}
 
-    // Callback para avisar que acaba de spawnear un barril
-    private Runnable onSpawn;
+	public void update(List<Barril> barriles) {
+		timer++;
+		if (timer >= intervalo) {
+			timer = 0;
+			intervalo = siguienteIntervalo(); // nuevo intervalo aleatorio para el siguiente
+			barriles.add(new Barril(100, 110));
+		}
+	}
 
-    public SpawnManager(Runnable onSpawn) {
-        this.onSpawn = onSpawn;
-        intervalo = siguienteIntervalo();
-    }
-
-    public void update(List<Barril> barriles) {
-        framesTotales++;
-        timer++;
-
-        if (timer >= intervalo) {
-            timer     = 0;
-            intervalo = siguienteIntervalo();
-            barriles.add(new Barril(100, 110));
-            if (onSpawn != null) onSpawn.run();
-        }
-    }
-
-    private int siguienteIntervalo() {
-        // Empieza entre 3-5 s (90-150 frames) y baja hasta mínimo ~1.5 s (45 frames)
-        // Cada 30 segundos (900 frames) reduce ~15 frames el intervalo base
-        int reduccion = Math.min((framesTotales / 900) * 15, 60);
-        int base      = Math.max(90 - reduccion, 45);
-        int variacion = Math.max(60 - reduccion / 2, 15);
-        return base + rand.nextInt(variacion);
-    }
+	private int siguienteIntervalo() {
+		return 60 + rand.nextInt(61); // entre 3 y 5 segundos
+	}
 }
