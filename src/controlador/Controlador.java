@@ -1,20 +1,16 @@
 package controlador;
-
 import vista.Assets;
 import vista.GameWindow;
 
 public class Controlador implements Runnable {
-
     private GameWindow gameWindow;
     private Thread     hilo;
     private volatile boolean corriendo   = false;
     private volatile boolean juegoActivo = false;
-
     private static final int FPS    = 30;
     private double TARGETTIME       = 1_000_000_000.0 / FPS;
     private double delta            = 0;
     public static int FPS_PROMEDIO  = FPS;
-
     private GameState gameState;
 
     public Controlador(GameWindow gameWindow) {
@@ -76,9 +72,11 @@ public class Controlador implements Runnable {
                 // Detectar fin de partida
                 if (gameState.isGameOver()) {
                     juegoActivo = false;
+                    MusicManager.stop();
                     gameWindow.mostrarGameOver();
                 } else if (gameState.isVictoria()) {
                     juegoActivo = false;
+                    MusicManager.stop();
                     gameWindow.mostrarVictoria();
                 }
 

@@ -13,7 +13,6 @@ import modelo.Nivel;
 import modelo.Vector2D;
 import vista.Assets;
 
-
 public class GameState {
 
     private Jugador      player;
@@ -42,8 +41,8 @@ public class GameState {
     private static final int MALO_TICKS_LANZANDO = 30;
 
     // ── Estado ────────────────────────────────────────────────────────
-    private boolean gameOver      = false;
-    private boolean victoria      = false;
+    private boolean gameOver       = false;
+    private boolean victoria       = false;
     private boolean musicaIniciada = false;
 
     public GameState(Teclado teclado) {
@@ -69,10 +68,6 @@ public class GameState {
     public boolean isVictoria() { return victoria; }
 
     public void update() {
-        if (gameOver || victoria) {
-            return;
-        }
-
         if (!musicaIniciada) {
             MusicManager.play("/resource/music/musicaJuego.wav");
             musicaIniciada = true;
@@ -108,7 +103,6 @@ public class GameState {
             if (b.getBounds().intersects(player.getBounds())) {
                 player.morir();
                 gameOver = true;
-                MusicManager.stop();
             }
         }
 
@@ -116,7 +110,6 @@ public class GameState {
         Rectangle rectPrincesa = new Rectangle(PRINCESA_X, PRINCESA_Y, PRINCESA_W, PRINCESA_H);
         if (player.getBounds().intersects(rectPrincesa)) {
             victoria = true;
-            MusicManager.stop();
         }
     }
 
