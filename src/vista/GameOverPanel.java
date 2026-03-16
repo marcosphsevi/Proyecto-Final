@@ -5,32 +5,26 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class MenuPanel extends JPanel {
+public class GameOverPanel extends JPanel {
 
     private Image fondo;
 
-    public MenuPanel(GameWindow window) {
+    public GameOverPanel(GameWindow window) {
 
         setLayout(null);
 
-        // Cargar imagen desde resources
-        fondo = new ImageIcon(getClass().getResource("/resource/menu.png")).getImage();
+        fondo = new ImageIcon(getClass().getResource("/resource/GameOver.png")).getImage();
 
-<<<<<<< HEAD
-        JButton jugar = crearBoton("JUGAR");
-        JButton salir = crearBoton("SALIR");
-=======
-        JButton jugar = crearBoton("START");
-        JButton salir = crearBoton("EXIT");
->>>>>>> 6e24ffc7c304286f4f1ecded1bad270c67c77b51
+        JButton reintentar = crearBoton("RETRY?");
+        JButton salir      = crearBoton("EXIT");
 
-        jugar.setBounds(320, 570, 180, 50);
-        salir.setBounds(320, 630, 180, 50);
+        reintentar.setBounds(310, 570, 200, 50);
+        salir.setBounds(310, 630, 200, 50);
 
-        jugar.addActionListener(e -> window.iniciarJuego());
+        reintentar.addActionListener(e -> window.reiniciarJuego());
         salir.addActionListener(e -> System.exit(0));
 
-        add(jugar);
+        add(reintentar);
         add(salir);
     }
 
@@ -41,22 +35,18 @@ public class MenuPanel extends JPanel {
         boton.setFocusPainted(false);
         boton.setBorderPainted(false);
         boton.setContentAreaFilled(false);
-
-        boton.setForeground(new Color(255,210,0)); // amarillo arcade
+        boton.setForeground(new Color(255, 210, 0));
         boton.setFont(new Font("Arial", Font.BOLD, 26));
-
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         boton.addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseEntered(MouseEvent e) {
-                boton.setForeground(new Color(200,160,0)); // amarillo oscuro
+                boton.setForeground(new Color(200, 160, 0));
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
-                boton.setForeground(new Color(255,210,0));
+                boton.setForeground(new Color(255, 210, 0));
             }
         });
 
@@ -66,7 +56,6 @@ public class MenuPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         g.drawImage(fondo, 0, 0, getWidth(), getHeight(), null);
     }
 }
