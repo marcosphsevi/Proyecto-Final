@@ -6,14 +6,14 @@ import vista.GameWindow;
 public class Controlador implements Runnable {
 
     private GameWindow gameWindow;
-    private Thread hilo;
+    private Thread     hilo;
     private volatile boolean corriendo   = false;
     private volatile boolean juegoActivo = false;
 
-    private static final int FPS = 30;
-    private double TARGETTIME    = 1_000_000_000.0 / FPS;
-    private double delta         = 0;
-    public static int FPS_PROMEDIO = FPS;
+    private static final int FPS    = 30;
+    private double TARGETTIME       = 1_000_000_000.0 / FPS;
+    private double delta            = 0;
+    public static int FPS_PROMEDIO  = FPS;
 
     private GameState gameState;
 
@@ -21,9 +21,7 @@ public class Controlador implements Runnable {
         this.gameWindow = gameWindow;
     }
 
-    public GameState getGameState() {
-        return gameState;
-    }
+    public GameState getGameState() { return gameState; }
 
     private void init() {
         Assets.init();
@@ -71,36 +69,31 @@ public class Controlador implements Runnable {
 
                 if (tiempo >= 1_000_000_000) {
                     FPS_PROMEDIO = fps;
-                    fps   = 0;
+                    fps    = 0;
                     tiempo = 0;
                 }
 
-                // Detectar game over
+                // Detectar fin de partida
                 if (gameState.isGameOver()) {
                     juegoActivo = false;
                     gameWindow.mostrarGameOver();
+                } else if (gameState.isVictoria()) {
+                    juegoActivo = false;
+                    gameWindow.mostrarVictoria();
                 }
 
             } else {
-                try {
-                    Thread.sleep(16);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+                try { Thread.sleep(16); }
+                catch (InterruptedException e) { Thread.currentThread().interrupt(); }
             }
         }
     }
 
-    private void update() {
-        gameState.update();
-    }
+    private void update() { gameState.update(); }
 
     public void stop() {
         corriendo = false;
-        try {
-            hilo.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        try { hilo.join(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
     }
 }

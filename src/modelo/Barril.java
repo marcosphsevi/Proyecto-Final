@@ -15,7 +15,7 @@ public class Barril extends GameObject {
     private static final float VELOCIDAD     = 3f;
     private static final int   W             = 24;
     private static final int   H             = 24;
-    private static final float PROB_ESCALERA = 0.4f;
+    private static final float PROB_ESCALERA = 0.6f;
 
     // Animación
     private int frameActual   = 0;

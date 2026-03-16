@@ -45,13 +45,8 @@ public class GameWindow extends JFrame {
         setVisible(true);
     }
 
-    public void setControlador(Controlador controlador) {
-        this.controlador = controlador;
-    }
-
-    public Teclado getTeclado() {
-        return teclado;
-    }
+    public void setControlador(Controlador controlador) { this.controlador = controlador; }
+    public Teclado getTeclado() { return teclado; }
 
     public void mostrarMenu() {
         menuPanel = new MenuPanel(this);
@@ -61,10 +56,16 @@ public class GameWindow extends JFrame {
     }
 
     public void mostrarGameOver() {
-        // Se llama desde el hilo del juego → hay que ejecutar en el EDT
         SwingUtilities.invokeLater(() -> {
-            GameOverPanel gameOverPanel = new GameOverPanel(this);
-            setContentPane(gameOverPanel);
+            setContentPane(new GameOverPanel(this));
+            revalidate();
+            repaint();
+        });
+    }
+
+    public void mostrarVictoria() {
+        SwingUtilities.invokeLater(() -> {
+            setContentPane(new VictoriaPanel(this));
             revalidate();
             repaint();
         });
@@ -74,11 +75,9 @@ public class GameWindow extends JFrame {
         JPanel gamePanel = new JPanel();
         gamePanel.setLayout(new BorderLayout());
         gamePanel.add(canvas, BorderLayout.CENTER);
-
         setContentPane(gamePanel);
         revalidate();
         repaint();
-
         canvas.requestFocusInWindow();
         controlador.startGame();
     }
@@ -87,32 +86,25 @@ public class GameWindow extends JFrame {
         JPanel gamePanel = new JPanel();
         gamePanel.setLayout(new BorderLayout());
         gamePanel.add(canvas, BorderLayout.CENTER);
-
         setContentPane(gamePanel);
         revalidate();
         repaint();
-
         canvas.requestFocusInWindow();
-        controlador.reiniciarJuego();  // nuevo método en Controlador
+        controlador.reiniciarJuego();
     }
 
     public void dibujar() {
         bs = canvas.getBufferStrategy();
-
         if (bs == null) {
             canvas.createBufferStrategy(3);
             return;
         }
-
         Graphics g = bs.getDrawGraphics();
-
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, ANCHO, LARGO);
-
         controlador.getGameState().draw(g);
         g.setColor(Color.WHITE);
         g.drawString("FPS: " + Controlador.FPS_PROMEDIO, 10, 20);
-
         g.dispose();
         bs.show();
     }
