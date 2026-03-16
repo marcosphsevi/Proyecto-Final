@@ -16,13 +16,8 @@ public class MenuPanel extends JPanel {
         // Cargar imagen desde resources
         fondo = new ImageIcon(getClass().getResource("/resource/menu.png")).getImage();
 
-<<<<<<< HEAD
         JButton jugar = crearBoton("JUGAR");
         JButton salir = crearBoton("SALIR");
-=======
-        JButton jugar = crearBoton("START");
-        JButton salir = crearBoton("EXIT");
->>>>>>> 6e24ffc7c304286f4f1ecded1bad270c67c77b51
 
         jugar.setBounds(320, 570, 180, 50);
         salir.setBounds(320, 630, 180, 50);
