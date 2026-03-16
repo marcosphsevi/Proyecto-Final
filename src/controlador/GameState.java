@@ -24,7 +24,7 @@ public class GameState {
     // Posición: plataforma más alta izquierda → Plataforma(0,182,503,14,0)
     private static final int PRINCESA_X = 315;
     private static final int PRINCESA_Y = 20;   // 84 - 64
-    private static final int PRINCESA_W = 40;
+    private static final int PRINCESA_W = 60;
     private static final int PRINCESA_H = 64;
 
     private int  princesaFrame      = 0;
@@ -34,9 +34,9 @@ public class GameState {
     // ── Malo ──────────────────────────────────────────────────────────
     // Posición: segunda plataforma izquierda → Plataforma(0,384,727,14,43)
     private static final int MALO_X = 20;
-    private static final int MALO_Y = 118;  // 182 - 64
-    private static final int MALO_W = 40;
-    private static final int MALO_H = 64;
+    private static final int MALO_Y = 40;  // 182 - 64
+    private static final int MALO_W = 80;
+    private static final int MALO_H = 145;
 
     private int  maloFrame          = 0;   // 0 = reposo, 1 = lanzando
     private int  maloTicksLanzando  = 0;
